@@ -1,0 +1,7 @@
+{
+  "name": "bootcamp-gostack-desafio-01",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Igor Trindade <igorhideki@gmail.com>",
+  "license": "MIT"
+}
