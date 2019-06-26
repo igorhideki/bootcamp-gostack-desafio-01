@@ -52,7 +52,7 @@ server.put('/projects/:id', checkProjectExists, (req, res) => {
 server.delete('/projects/:id', checkProjectExists, (req, res) => {
   projects = projects.filter(project => project.id !== req.params.id)
 
-  return res.json(projects)
+  return res.send()
 })
 
 server.post('/projects/:id/tasks', checkProjectExists, (req, res) => {
