@@ -1,6 +1,7 @@
 const express = require('express')
 
 const server = express()
+let amountApiRequest = 0
 let projects = [
   {
     id: '1',
@@ -15,6 +16,13 @@ let projects = [
 ]
 
 server.use(express.json())
+
+server.use((req, res, next) => {
+  amountApiRequest += 1
+  console.log(`Número de requisições na API: ${amountApiRequest}`)
+
+  next()
+})
 
 server.get('/projects', (req, res) => {
   return res.json(projects)
@@ -32,7 +40,7 @@ server.post('/projects', (req, res) => {
   return res.json(projects)
 })
 
-server.put('/projects/:id', (req, res) => {
+server.put('/projects/:id', checkProjectExists, (req, res) => {
   const { title } = req.body
   const projectSelected = projects.find(project => project.id === req.params.id)
 
@@ -41,13 +49,13 @@ server.put('/projects/:id', (req, res) => {
   return res.json(projects)
 })
 
-server.delete('/projects/:id', (req, res) => {
+server.delete('/projects/:id', checkProjectExists, (req, res) => {
   projects = projects.filter(project => project.id !== req.params.id)
 
   return res.json(projects)
 })
 
-server.post('/projects/:id/tasks', (req, res) => {
+server.post('/projects/:id/tasks', checkProjectExists, (req, res) => {
   const { title } = req.body
   const projectSelected = projects.find(project => project.id === req.params.id)
 
@@ -55,5 +63,16 @@ server.post('/projects/:id/tasks', (req, res) => {
 
   return res.json(projects)
 })
+
+function checkProjectExists(req, res, next) {
+  const { id } = req.params
+  const hasProject = projects.some(project => project.id === id)
+
+  if (!hasProject) {
+    return res.status(400).json({ error: 'Project does not exists' })
+  }
+
+  return next()
+}
 
 server.listen(3000)
